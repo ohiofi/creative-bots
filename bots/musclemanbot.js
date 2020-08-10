@@ -107,7 +107,7 @@ module.exports = {
     ]
 
     function containsKeyword(str){
-      let lowerStr = str;
+      let lowerStr = str.toLowerCase();
       for (let i = 0; i < keywords.length; ++i) {
         if(lowerStr.indexOf(keywords[i]) > -1){
           return true
@@ -116,7 +116,7 @@ module.exports = {
       return false
     }
     function keywordCut(str){
-      let lowerStr = str;
+      let lowerStr = str.toLowerCase();
       for (let i = 0; i < keywords.length; ++i) {
         if(lowerStr.indexOf(keywords[i]) > -1){
           return str.slice(lowerStr.indexOf(keywords[i]),str.length)
