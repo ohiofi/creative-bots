@@ -28,7 +28,7 @@ module.exports = {
   /*
     Basic information about your bot.
   */
-  active: false, // All bots inside the "bots" folder are loaded automatically. Change "active" to false to prevent loading your bot.
+  active: true, // All bots inside the "bots" folder are loaded automatically. Change "active" to false to prevent loading your bot.
   name: 'MuscleManBot',
   description: 'Just a very basic bot!',
   /*
