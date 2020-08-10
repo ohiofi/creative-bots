@@ -35,7 +35,7 @@ module.exports = {
     The `interval` can be either one of the values inside helpers/cron-schedules.js, or you can also use custom cron schedules.
     See https://www.npmjs.com/package/cron#available-cron-patterns for more details.
   */
-  interval: cronSchedules.EVERY_THREE_HOURS,
+  interval: cronSchedules.EVERY_TWO_HOURS,
   script: function(){
   /*
     This is your bot's main code. Check out botwiki.org/resources for tutorials and botwiki.org/bots for some inspiration.
@@ -58,6 +58,10 @@ module.exports = {
     function findGoodCandidateIndex(arr){
       for(let i=0;i<arr.length;i++){
         let txt = arr[i].text;
+        if (txt.length > 114){
+          console.log("- Too Long - "+arr[i].text);
+          continue
+        }
         if (!passedBanlist(txt)){
           console.log("- Failed Banlist - "+arr[i].text);
           continue
