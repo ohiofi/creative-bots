@@ -1,6 +1,7 @@
 const helpers = require(__dirname + '/../helpers/helpers.js'),
       cronSchedules = require( __dirname + '/../helpers/cron-schedules.js' ),
       TwitterClient = require(__dirname + '/../helpers/twitter.js'),
+      animals = require( __dirname + '/../data/animals.js' ),
       mastodonClient = require(__dirname + '/../helpers/mastodon.js'),
       tumblrClient = require(__dirname + '/../helpers/tumblr.js');
 
@@ -9,7 +10,7 @@ const twitter = new TwitterClient( {
   consumer_secret: process.env.HEYDIDDLEBOT_TWITTER_CONSUMER_SECRET,
   access_token: process.env.HEYDIDDLEBOT_TWITTER_ACCESS_TOKEN,
   access_token_secret: process.env.HEYDIDDLEBOT_TWITTER_ACCESS_TOKEN_SECRET
-} );
+},"HeyDiddleBot" );
 
 // const mastodon = new mastodonClient( {
 //    access_token: process.env.BOT_1_MASTODON_ACCESS_TOKEN,
@@ -81,7 +82,7 @@ module.exports = {
       new Array("tweet","beet","feet","heat","meat","seat","street","treat","wheat")
     );
 
-    const adj = new Array("abandoned","aggressive","altruistic","annoying","anxious","athletic","attractive","awesome","beautiful","big","big headed","big nosed","bite-sized","black","bland","blue","booger eater","booger eating crum-bum","bouncy","bright","calm","chubby","chunky","clear-cut","clumsy","colossal","confused","cool","courageous","cowardly","crazy","creepy","crippled","cute","dangerous","dark","deformed","dense","depressed","dinosaur-armed","dirty","disgusting","dishonest","dizzy","do do dunderhead","dull","dumb","elliptical","embarrassed","enormous","evil","excited","faceless","fast","fat","fearful","flat","fluffy","friendly","fun","funky","funny","furious","fuzzy","gangsta","geek","ghetto","giant","gigantic","gnarly","gray","green","gross","grouchy","gucci","hairy","happy","heartbroken","hideous","hillbilly","huge","humongous","idiot","imaginative","immature","inappropriate","indigo","intelligent","interested","invisible","kind","lame","lime green","lonely","loser","lowkey","lovely","magenta","mature","mean","mentally unstable","microscopic","multi-headed","mysterious","mystical","nerd","nerdy","nervous","nonfunctional","obedient","obese","oblivious","observant","obsessed","on fleek","one eyed","orange","outgoing","oversized","overweight","pale","paranoid","peaceful","pitiful","pleasant","poor","popular","possessed","predictable","pretty","proud","pudgy","puking","purple","quiet","random","ratchet","rebellious","red","redneck","rested","robotic","round","rusty","sad","salty","savage","scared","scrawny","sharp","short","shy","skinny","sly","small","smart","smelly","sneaky","soft","speechless","squishy","stinky","strong","stupid","sunny","sweet","tall","tame","tan","thin","thug","tiny","touchy","turquoise","twitchy","tyrannical","ugly","unappealing","unattractive","vexed","vulgar","weird","weirdo","white","wide","yellow","young");
+    const adj = new Array("abandoned","aggressive","altruistic","annoying","anxious","athletic","attractive","awesome","beautiful","big","big headed","big nosed","bite-sized","black","bland","blue","booger eater","booger eating crum-bum","bouncy","bright","calm","chubby","chunky","clear-cut","clumsy","colossal","confused","cool","courageous","cowardly","crazy","creepy","crippled","cute","dangerous","dark","deformed","dense","depressed","dinosaur-armed","dirty","disgusting","dishonest","dizzy","do do dunderhead","dull","dumb","elliptical","embarrassed","enormous","evil","excited","faceless","fast","fat","fearful","flat","fluffy","friendly","fun","funky","funny","furious","fuzzy","geek","ghetto","giant","gigantic","gnarly","gray","green","gross","grouchy","gucci","hairy","happy","heartbroken","hideous","hillbilly","huge","humongous","idiot","imaginative","immature","inappropriate","indigo","intelligent","interested","invisible","kind","lame","lime green","lonely","loser","lowkey","lovely","magenta","mature","mean","mentally unstable","microscopic","multi-headed","mysterious","mystical","nerd","nerdy","nervous","nonfunctional","obedient","obese","oblivious","observant","obsessed","on fleek","one eyed","orange","outgoing","oversized","overweight","pale","paranoid","peaceful","pitiful","pleasant","poor","popular","possessed","predictable","pretty","proud","pudgy","puking","purple","quiet","random","ratchet","rebellious","red","redneck","rested","robotic","round","rusty","sad","salty","savage","scared","scrawny","sharp","short","shy","skinny","sly","small","smart","smelly","sneaky","soft","speechless","squishy","stinky","strong","stupid","sunny","sweet","tall","tame","tan","thin","thug","tiny","touchy","turquoise","twitchy","tyrannical","ugly","unappealing","unattractive","vexed","vulgar","weird","weirdo","white","wide","yellow","young");
 
     const animal = new Array("alien","alligator","ant","arctic seal","bat","bear","bigfoot","bird","blobfish","Bulbasaur","bull","bunnies","bush baby","calf","camel","cat","cerberus","Charizard","cheetah","chicken","clown fish","clownfish","cougar","cow","coyote","crab","cricket","crocodile","cyclops","deer","dodo","dog","dolphin","dragon","drop bear","duck","eagle","Eevee","elephant","elk","fish","flamingo","foal","fox","frog","gazelle","geese","giraffe","goldfish","gorgon","grizzly bear","groundhog","hippocampus","horse","horses","human","hydra","jellyfish","Jigglypuff","kangaroo","kitten","kittens","koala","komodo dragon","leopard","lion","lizard","loch ness monster","Magikarp","meerkat","megalodon","mermaid","mice","mink","minotaur","monkey","mouse","mule","narwhal","newt","ogre","ostrich","owl","panda","peacock","pegasus","phoenix","Pikachu","pig","pizzaduck","Pokémon","pufferfish","puppies","puppy","rabbit","raccoon","rat","raven","scorpion","shark","sheep","shrimp","sloth","snake","sparrow","spider","squirrel","Squirtle","sting ray","stingray","tapir","tiger","toucan","troll","tropical shrimp","turkey","turtle","tyrannosaurus rex","unicorn","uniduck","vampire","velociraptor","weasel","werewolf","wild cat","wild dog","wolf","yeti","zebra","zebras","zombie");
 
@@ -98,16 +99,16 @@ module.exports = {
       shuffle(rhymeSet1);
       shuffle(rhymeSet2);
       shuffle(adj);
-      shuffle(animal);
+      shuffle(animals);
       shuffle(synonymsForFun);
       shuffle(synonymsForLaughed);
       shuffle(synonymsForJumped);
 
       return "Hey "+rhymeSet1[0]+" "+rhymeSet1[0]+
-      ", the "+animal[0]+" & the "+rhymeSet1[1]+
-      ", the "+animal[1]+" "+synonymsForJumped[0]+" over the "+rhymeSet2[0]+
-      ". The "+adj[0]+" "+animal[2]+" "+synonymsForLaughed[0]+
-      ", to see such "+synonymsForFun[0]+" & the "+animal[3]+
+      ", the "+animals[0]+" & the "+rhymeSet1[1]+
+      ", the "+animals[1]+" "+synonymsForJumped[0]+" over the "+rhymeSet2[0]+
+      ". The "+adj[0]+" "+animals[2]+" "+synonymsForLaughed[0]+
+      ", to see such "+synonymsForFun[0]+" & the "+animals[3]+
       " ran away with the "+rhymeSet2[1]+".";
     }
 

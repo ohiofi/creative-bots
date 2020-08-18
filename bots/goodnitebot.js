@@ -1,6 +1,7 @@
 const helpers = require(__dirname + '/../helpers/helpers.js'),
       cronSchedules = require( __dirname + '/../helpers/cron-schedules.js' ),
       TwitterClient = require(__dirname + '/../helpers/twitter.js'),
+      animals = require( __dirname + '/../data/animals.js' ),
       mastodonClient = require(__dirname + '/../helpers/mastodon.js'),
       tumblrClient = require(__dirname + '/../helpers/tumblr.js');
 
@@ -9,7 +10,7 @@ const twitter = new TwitterClient( {
   consumer_secret: process.env.GOODNITEBOT_TWITTER_CONSUMER_SECRET,
   access_token: process.env.GOODNITEBOT_TWITTER_ACCESS_TOKEN,
   access_token_secret: process.env.GOODNITEBOT_TWITTER_ACCESS_TOKEN_SECRET
-} );
+},"GoodniteBot" );
 
 // const mastodon = new mastodonClient( {
 //    access_token: process.env.BOT_1_MASTODON_ACCESS_TOKEN,
@@ -35,7 +36,7 @@ module.exports = {
     The `interval` can be either one of the values inside helpers/cron-schedules.js, or you can also use custom cron schedules.
     See https://www.npmjs.com/package/cron#available-cron-patterns for more details.
   */
-  interval: cronSchedules.EVERY_THREE_HOURS,
+  interval: cronSchedules.EVERY_FOUR_HOURS,
   script: function(){
   /*
     This is your bot's main code. Check out botwiki.org/resources for tutorials and botwiki.org/bots for some inspiration.
@@ -82,9 +83,7 @@ module.exports = {
     new Array("tweet","beet","feet","heat","meat","seat","street","treat","wheat")
   );
 
-  const adj = new Array("abandoned","aggressive","altruistic","annoying","anxious","athletic","attractive","awesome","beautiful","big","big headed","big nosed","bite-sized","black","bland","blue","booger eater","booger eating","bouncy","bright","calm","chubby","chunky","clear-cut","clumsy","colossal","confused","cool","courageous","cowardly","crazy","creepy","crippled","cute","dangerous","dark","deformed","dense","depressed","dinosaur-armed","dirty","disgusting","dishonest","dizzy","do do dunderhead","dull","dumb","elliptical","embarrassed","enormous","evil","excited","faceless","fast","fat","fearful","flat","fluffy","friendly","fun","funky","funny","furious","fuzzy","gangsta","geek","ghetto","giant","gigantic","gnarly","gray","green","gross","grouchy","gucci","hairy","happy","heartbroken","hideous","hillbilly","huge","humongous","idiot","imaginative","immature","inappropriate","indigo","intelligent","interested","invisible","kind","lame","lime green","lonely","loser","lowkey","lovely","magenta","mature","mean","mentally unstable","microscopic","multi-headed","mysterious","mystical","nerd","nerdy","nervous","nonfunctional","obedient","obese","oblivious","observant","obsessed","on fleek","one eyed","orange","outgoing","oversized","overweight","pale","paranoid","peaceful","pitiful","pleasant","poor","popular","possessed","predictable","pretty","proud","pudgy","puking","purple","quiet","random","ratchet","rebellious","red","redneck","rested","robotic","round","rusty","sad","salty","savage","scared","scrawny","sharp","short","shy","skinny","sly","small","smart","smelly","sneaky","soft","speechless","squishy","stinky","strong","stupid","sunny","sweet","tall","tame","tan","thin","thug","tiny","touchy","turquoise","twitchy","tyrannical","ugly","unappealing","unattractive","vexed","vulgar","weird","weirdo","white","wide","yellow","young");
-
-  const animal = new Array("alien","alligator","ant","arctic seal","bat","bear","bigfoot","bird","blobfish","Bulbasaur","bull","bunnies","bush baby","calf","camel","cat","cerberus","Charizard","cheetah","chicken","clown fish","clownfish","cougar","cow","coyote","crab","cricket","crocodile","cyclops","deer","dodo","dog","dolphin","dragon","drop bear","duck","eagle","Eevee","elephant","elk","fish","flamingo","foal","fox","frog","gazelle","geese","giraffe","goldfish","gorgon","grizzly bear","groundhog","hippocampus","horse","horses","human","hydra","jellyfish","Jigglypuff","kangaroo","kitten","kittens","koala","komodo dragon","leopard","lion","lizard","loch ness monster","Magikarp","meerkat","megalodon","mermaid","mice","mink","minotaur","monkey","mouse","mule","narwhal","newt","ogre","ostrich","owl","panda","peacock","pegasus","phoenix","Pikachu","pig","pizzaduck","Pokémon","pufferfish","puppies","puppy","rabbit","raccoon","rat","raven","scorpion","shark","sheep","shrimp","sloth","snake","sparrow","spider","squirrel","Squirtle","sting ray","stingray","tapir","tiger","toucan","troll","tropical shrimp","turkey","turtle","tyrannosaurus rex","unicorn","uniduck","vampire","velociraptor","weasel","werewolf","wild cat","wild dog","wolf","yeti","zebra","zebras","zombie");
+  const adj = new Array("abandoned","aggressive","altruistic","annoying","anxious","athletic","attractive","awesome","beautiful","big","big headed","big nosed","bite-sized","black","bland","blue","booger eater","booger eating","bouncy","bright","calm","chubby","chunky","clear-cut","clumsy","colossal","confused","cool","courageous","cowardly","crazy","creepy","crippled","cute","dangerous","dark","deformed","dense","depressed","dinosaur-armed","dirty","disgusting","dishonest","dizzy","do do dunderhead","dull","dumb","elliptical","embarrassed","enormous","evil","excited","faceless","fast","fat","fearful","flat","fluffy","friendly","fun","funky","funny","furious","fuzzy","geek","ghetto","giant","gigantic","gnarly","gray","green","gross","grouchy","gucci","hairy","happy","heartbroken","hideous","hillbilly","huge","humongous","idiot","imaginative","immature","inappropriate","indigo","intelligent","interested","invisible","kind","lame","lime green","lonely","loser","lowkey","lovely","magenta","mature","mean","mentally unstable","microscopic","multi-headed","mysterious","mystical","nerd","nerdy","nervous","nonfunctional","obedient","obese","oblivious","observant","obsessed","on fleek","one eyed","orange","outgoing","oversized","overweight","pale","paranoid","peaceful","pitiful","pleasant","poor","popular","possessed","predictable","pretty","proud","pudgy","puking","purple","quiet","random","ratchet","rebellious","red","redneck","rested","robotic","round","rusty","sad","salty","savage","scared","scrawny","sharp","short","shy","skinny","sly","small","smart","smelly","sneaky","soft","speechless","squishy","stinky","strong","stupid","sunny","sweet","tall","tame","tan","thin","thug","tiny","touchy","turquoise","twitchy","tyrannical","ugly","unappealing","unattractive","vexed","vulgar","weird","weirdo","white","wide","yellow","young");
 
   const synonymsForFun = new Array("sport","weird flex","fun","play","a joke","joy","cheer","a game","mirth","a romp","a sight","nonsense","a treat","absurdity","enjoyment","a pastime","a blast","buffoonery","clowning","festivity","tomfoolery","foolery","horseplay","playfulness","highjinks","joking","drivel","baloney","babble","diddle","folly","foolishness","gibberish","madness","rubbish","silliness","stupidity","balderdash","bananas","craziness","giddiness","hogwash","hooey","jest","poppycock","tripe","a goof","goofiness","applesauce","a farce","idiocy","daftness","illogicalness","insanity","madness","lunacy","horse feathers","mish mash","malarky","monkey business","antics","clowning around","absurdness","a prank","mischief","monkeyshine","piffle","a delight","regalement","hilarity","hoopla","comedy","a schtick","satire","humor","slapstick","a scene","a display","a spectacle","a show");
 
@@ -111,7 +110,7 @@ module.exports = {
     shuffle(adj);
     shuffle(roomNoun);
     shuffle(color);
-    shuffle(animal);
+    shuffle(animals);
     shuffle(airRhymes);
     shuffle(synonymsForFun);
     shuffle(synonymsForLaughed);
@@ -119,63 +118,43 @@ module.exports = {
     return new Array(
       "In the "+adj[0]+" "+color[0]+" "+roomNoun[0]+
       ", there was a telephone. And a "+color[1]+" "+rhymeSet1[0]+
-      ", and a picture of the "+animal[0]+" jumping over the "+rhymeSet1[1]+
+      ", and a picture of the "+animals[0]+" jumping over the "+rhymeSet1[1]+
       ". And there were three "+adj[1]+" "+rhymeSet2[0]+"s sitting on "+rhymeSet2[1]+
       "s. And two "+adj[2]+" "+rhymeSet3[0]+"s, and a pair of "+rhymeSet3[1]+"s.",
 
       "And a "+adj[3]+" toy "+rhymeSet4[0]+", and a "+adj[4]+" "+rhymeSet4[1]+
-      ". And a "+animal[1]+" and a "+rhymeSet5[0]+", and a bowl full of "+rhymeSet5[1]+
+      ". And a "+animals[1]+" and a "+rhymeSet5[0]+", and a bowl full of "+rhymeSet5[1]+
       "s. And a "+adj[5]+" "+adj[6]+" lady who was whispering '"+rhymeSet5[2]+"'.",
 
-      "Goodnight "+roomNoun[0]+", goodnight "+rhymeSet1[1]+". Goodnight "+animal[0]+
+      "Goodnight "+roomNoun[0]+", goodnight "+rhymeSet1[1]+". Goodnight "+animals[0]+
       " jumping over the "+rhymeSet1[1]+". Goodnight light and the "+color[1]+" "+
       rhymeSet1[0]+". Goodnight "+rhymeSet2[0]+"s, goodnight "+rhymeSet2[1]+
       "s. Goodnight "+rhymeSet3[0]+"s, and goodnight "+rhymeSet3[1]+"s. Goodnight "+
       adj[3]+" "+rhymeSet4[0]+", and goodnight "+rhymeSet4[1]+".",
 
-      "Goodnight "+animal[1]+", and goodnight "+rhymeSet5[0]+
+      "Goodnight "+animals[1]+", and goodnight "+rhymeSet5[0]+
       ". Goodnight nobody, goodnight "+rhymeSet5[1]+"s. And goodnight to the "+
       adj[6]+" lady whispering '"+rhymeSet5[2]+"'. Goodnight "+rhymeSet6[0]+
       "s, goodnight "+airRhymes[0]+", goodnight "+rhymeSet6[1]+"s everywhere."
     );
   }
 
-  // Wrapping my code in a promise wrapper...
-  let post_promise = require('util').promisify( // Wrap post function w/ promisify to allow for sequential posting.
-    (options, data, cb) => Twit.post(
-      options,
-      data,
-      (err, ...results) => cb(err, results)
-    )
-  );
-
-  // Async/await for the results of the previous post, get the id...
-  const tweet_crafter = async (array, id) => {
-    for(let i = 0; i < array.length; i++){
-      let content = await post_promise('statuses/update', { status: array[i], in_reply_to_status_id: id }).catch(err => console.log(err));;
-      id = content[0].id_str;
-    };
+  const { TwitThread } = require("twit-thread");
+// or import { TwitThread } from "twit-thread" in Typescript
+  const config = {
+    consumer_key: process.env.GOODNITEBOT_TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.GOODNITEBOT_TWITTER_CONSUMER_SECRET,
+    access_token: process.env.GOODNITEBOT_TWITTER_ACCESS_TOKEN,
+    access_token_secret: process.env.GOODNITEBOT_TWITTER_ACCESS_TOKEN_SECRET,
+    timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
+    strictSSL:            true,     // optional - requires SSL certificates to be valid.
   };
-
-  const tweetIt = (first, subsequent) => {
-    post_promise('statuses/update', { status: `${first}` })
-      .then((top_tweet) => {
-          console.log(`${top_tweet[0].text} tweeted!`);
-          let starting_id = top_tweet[0].id_str; // Get top-line tweet ID...
-          tweet_crafter(subsequent, starting_id);
-      })
-      .catch(err => console.log(err));
-  };
-
-  function sayGoodnight(){
-    let myArray = generateText();
-    tweetIt(myArray[0],[myArray[1],myArray[2],myArray[3]])
+  async function tweetThread() {
+     const t = new TwitThread(config);
+     const arr = generateText();
+     await t.tweetThread([{text: arr[0]}, {text: arr[1]}, {text: arr[2]}, {text: arr[3]}]);
   }
-
-  sayGoodnight();
-
-
-
+  tweetThread();
 
     //twitter.tweet( text );
     //mastodon.toot( text );

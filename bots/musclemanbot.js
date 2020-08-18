@@ -9,7 +9,8 @@ const twitter = new TwitterClient( {
   consumer_secret: process.env.MUSCLEMANBOT_TWITTER_CONSUMER_SECRET,
   access_token: process.env.MUSCLEMANBOT_TWITTER_ACCESS_TOKEN,
   access_token_secret: process.env.MUSCLEMANBOT_TWITTER_ACCESS_TOKEN_SECRET
-} );
+},"MuscleManBot" );
+
 
 // const mastodon = new mastodonClient( {
 //    access_token: process.env.BOT_1_MASTODON_ACCESS_TOKEN,
@@ -35,6 +36,7 @@ module.exports = {
     The `interval` can be either one of the values inside helpers/cron-schedules.js, or you can also use custom cron schedules.
     See https://www.npmjs.com/package/cron#available-cron-patterns for more details.
   */
+  //interval: cronSchedules.EVERY_THIRTY_MINUTES,
   interval: cronSchedules.EVERY_TWO_HOURS,
   script: function(){
   /*
@@ -43,22 +45,12 @@ module.exports = {
 
 
 
-    function getTimeline(){
-      let options = {
-        count: 25,
-        exclude_replies: true
-      };
 
-      Twit.get('statuses/home_timeline', options,(err,data,response)=>{
-        console.log(data.length);
-        tweet_crafter(data);
-      })
-    }
 
     function findGoodCandidateIndex(arr){
       for(let i=0;i<arr.length;i++){
         let txt = arr[i].text;
-        if (txt.length > 114){
+        if (txt.length > 115){
           console.log("- Too Long - "+arr[i].text);
           continue
         }
@@ -89,24 +81,29 @@ module.exports = {
     const keywords = [
       " is ",
       " isn't ",
-      " isn’t ",
       " will ",
       " won't ",
-      " won’t ",
       " wants ",
+      " wanted ",
       " can ",
       " can't ",
-      " can’t ",
       " made ",
       " got ",
-      " has ",
       " hasn't ",
-      " hasn’t ",
       " had ",
-      " went "
+      " went ",
+      " does ",
+      " doesn't ",
+      " gets to ",
+      " takes ",
+      " tries ",
+      " tried ",
+      " failed ",
+      " it's "
     ]
 
     function containsKeyword(str){
+      str = str.replace("’", "'");
       let lowerStr = str.toLowerCase();
       for (let i = 0; i < keywords.length; ++i) {
         if(lowerStr.indexOf(keywords[i]) > -1){
@@ -115,10 +112,15 @@ module.exports = {
       }
       return false
     }
+
     function keywordCut(str){
+      str = str.replace("’", "'");
       let lowerStr = str.toLowerCase();
       for (let i = 0; i < keywords.length; ++i) {
         if(lowerStr.indexOf(keywords[i]) > -1){
+          if(keywords[i] == " it's "){
+            return " is "+str.slice(lowerStr.indexOf(keywords[i])+6,str.length)
+          }
           return str.slice(lowerStr.indexOf(keywords[i]),str.length)
         }
       }
@@ -128,6 +130,7 @@ module.exports = {
     // yr code here
     function punctuationCut(str)
     {
+      str = str.replace("’", "'");
       if(str.indexOf("U.S. ") != -1 )// Convert " U.S. " to " US "
       	str = str.replace("U.S. ","US ");
       if(str.indexOf("?") != -1 )// Cut at "?"
@@ -150,6 +153,8 @@ module.exports = {
       	str = str.replace(" his "," her ");
       if(str.indexOf(" he ") != -1 )// Convert " he " to " she "
         str = str.replace(" he "," she ");
+      if(str.indexOf(" he's ") != -1 )// Convert " he " to " she "
+        str = str.replace(" he's "," she's ");
       if(str.indexOf(" man ") != -1 )// Convert " he " to " she "
         str = str.replace(" man "," woman ");
       str = str.trim();
@@ -161,19 +166,22 @@ module.exports = {
       if(index == -1){
         return
       }
+      console.log("🥇Good Candidate == "+myArray[index].text)
       let tweetText = "You know who else"+keywordCut(myArray[index].text)
       tweetText = punctuationCut(tweetText);
       tweetText+="? https://twitter.com/"+myArray[index].user.screen_name+"/status/"+myArray[index].id_str;// Append the URL of the @ mention";
       console.log(tweetText);
-      let tweetObj = {
-        status: tweetText,
-        in_reply_to_status_id: myArray[index].id
-      };
-      Twit.post('statuses/update', tweetObj, twitterCallback)
+
+      let text = tweetText;
+      let in_reply_to_status_id = myArray[index].id;
+      twitter.replyToTweet(text, in_reply_to_status_id);
+
     }
 
-
-    getTimeline();
+    setTimeout(
+      function(){twitter.getTimeline(50,tweet_crafter)},
+      1000 * 60 * Math.floor(1 + Math.random() * 59) //ms*s*m*h
+    );
     //mastodon.toot( text );
     //tumblr.post( title, text );
   }
