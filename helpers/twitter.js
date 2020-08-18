@@ -3,15 +3,19 @@ const helpers = require(__dirname + '/../helpers/helpers.js'),
       Q = require( 'q' );
 
 class TwitterClient {
-  constructor( keys, useAltClient ) {
+  constructor( keys,botName, useAltClient ) {
     let twitterClientInstance = {};
-
+    console.log( botName )
+    // console.log( keys.consumer_key)
+    // console.log( keys.consumer_secret)
+    // console.log( keys.access_token)
+    // console.log( keys.access_token_secret)
     if ( keys && keys.consumer_key && keys.consumer_secret && keys.access_token && keys.access_token_secret ){
-      twitterClientInstance = new Twit( keys );  
+      twitterClientInstance = new Twit( keys );
     } else {
-      console.log( 'missing Twitter API keys' );
+      console.log( botName+' missing Twitter API keys' );
     }
-    
+
     if ( useAltClient ){
       twitterClientInstance._buildReqOpts = function (method, path, params, isStreaming, callback) {
         var helpers = require('twit/lib/helpers');
@@ -119,16 +123,17 @@ class TwitterClient {
             return;
           })
         }
-      }        
+      }
     }
-  
-    
+
+
     this.client = twitterClientInstance;
   }
 
   tweet( text, cb ) {
-      console.log( 'tweeting...' );
+
       if ( this.client ){
+        console.log( 'tweeting...' );
         this.client.post( 'statuses/update', { status: text }, function( err, data, response ) {
           if ( data && data.id_str && data.user && data.user.screen_name ){
             console.log( 'tweeted', `https://twitter.com/${ data.user.screen_name }/status/${ data.id_str }` );
@@ -143,10 +148,65 @@ class TwitterClient {
       }
   }
 
+  // let post_promise = require('util').promisify( // Wrap post function w/ promisify to allow for sequential posting.
+  //   (options, data, cb) => this.client.post(
+  //     options,
+  //     data,
+  //     (err, ...results) => cb(err, results)
+  //   )
+  // );
+  // // Async/await for the results of the previous post, get the id...
+  // const tweet_crafter = async (array, id) => {
+  //   for(let i = 0; i < array.length; i++){
+  //     let content = await post_promise('statuses/update', { status: array[i], in_reply_to_status_id: id }).catch(err => console.log(err));;
+  //     id = content[0].id_str;
+  //   };
+  // };
+  //
+  // tweetThread( arrayOfTweetTexts ){
+  //
+  //   if ( this.client ){
+  //     console.log( 'sending tweet thread...' );
+  //
+  //
+  //
+  //
+  //     let first = arrayOfTweetTexts[0];
+  //     let subsequent = arrayOfTweetTexts.slice(1);
+  //     const tweetIt = (first, subsequent) => {
+  //       post_promise('statuses/update', { status: `${first}` })
+  //         .then((top_tweet) => {
+  //             console.log(`${top_tweet[0].text} tweeted!`);
+  //             let starting_id = top_tweet[0].id_str; // Get top-line tweet ID...
+  //             tweet_crafter(subsequent, starting_id);
+  //         })
+  //         .catch(err => console.log(err));
+  //     };
+  //   }
+  // }
+
+  replyToTweet( text, in_reply_to_status_id, cb ){
+
+    if ( this.client ){
+      console.log( 'sending quote tweet...' );
+      this.client.post('statuses/update', { status:text, in_reply_to_status_id:in_reply_to_status_id }, function( err, data, response ) {
+        if ( data && data.id_str && data.user && data.user.screen_name ){
+          console.log( 'tweeted', `https://twitter.com/${ data.user.screen_name }/status/${ data.id_str }` );
+        }
+        if ( err ){
+          console.log( 'Twitter API error', err );
+        }
+        if ( cb ){
+          cb( err, data );
+        }
+      } );
+    }
+  }
+
   postImage( status, imageBase64, cb, inReplyToID ){
     if ( this.client ){
       let client = this.client;
-      
+
       this.client.post( 'media/upload', { media_data: imageBase64 }, function ( err, data, response ) {
         if ( err ){
           console.log( 'error:', err );
@@ -181,7 +241,7 @@ class TwitterClient {
             }
           } );
         }
-      } ); 
+      } );
     }
   }
 
@@ -223,13 +283,13 @@ class TwitterClient {
             cb( err, data );
           }
         }
-      } );  
-    }      
+      } );
+    }
   }
-  
+
   postPoll( statustext, entries, duration ){
     const client = this.client;
-    
+
     console.log( client );
     var params = {
       'twitter:api:api:endpoint': '1',
@@ -244,13 +304,13 @@ class TwitterClient {
       throw 'Too many poll entries ( max 4 )';
     }
 
-    entries.forEach( 
+    entries.forEach(
        function( val, i ) {
            params['twitter:string:choice' + ( i + 1 ) + '_label'] = val;
        }
      );
 
-    return Q.nfcall( 
+    return Q.nfcall(
       client.post.bind( client ),
       'cards/create',
       {
@@ -266,41 +326,85 @@ class TwitterClient {
     }, function( err ) {
       console.error( 'Error on creating twitter card', err );
     } ).then( function( data ) {
-      return Q.nfcall( 
+      return Q.nfcall(
         client.post.bind( client ),
         'statuses/update',
         {
-          'status': statustext, 
+          'status': statustext,
           'card_uri': data.card_uri,
           'include_cards': 1,
           'cards_platform': 'iPhone-13',
           'contributor_details': 1
         }
        ).then( function( pack ) {
-        return pack[0];   
+        return pack[0];
       }, function( err ) {
         console.error( 'Error on posting tweet' );
         console.error( err );
       } );
-    } );    
+    } );
   }
 
   getCard( tweet ) {
     return Q.nfcall(
       this.get.bind(this),
-      'statuses/show/' + tweet.id_str, 
+      'statuses/show/' + tweet.id_str,
       {
         cards_platform: 'iPhone-13',
         include_cards: 1,
       }
     ).then(function(pack) {
       var data = pack[0];
-      return data.card;   
+      return data.card;
     }, function(err) {
         console.error('Error getting card data');
         console.error(err);
     });
   }
+
+  getTimeline( tweetCount, cb ){
+    if ( this.client ){
+      console.log( 'getting timeline...' );
+      let options = {
+        count: tweetCount,
+        exclude_replies: true
+      };
+      this.client.get( 'statuses/home_timeline', options, (err, data, response)=>{
+        console.log( 'Retrieved ' + data.length + ' tweets from timeline' );
+        cb( data ); // passes array of tweets to the callback function
+      });
+    }
+  }
+
+  search( queryString, tweetCount, cb ){
+    if ( this.client ){
+      console.log( 'searching for ' + queryString + '...' );
+      let options = {
+        q: queryString,
+        count: tweetCount
+      };
+      this.client.get( 'search/tweets', options, (err, data, response)=>{
+        console.log( 'Retrieved ' + data.statuses.length + ' tweets from timeline' );
+        cb( data.statuses ); // passes array of tweets to the callback function
+      });
+    }
+  }
+
+  getUserTweets( screen_name, tweetCount, cb ){
+    if ( this.client ){
+      console.log( 'getting tweets from ' + screen_name + '...' );
+      let options = {
+        screen_name: screen_name,
+        count: tweetCount
+      };
+      this.client.get( 'statuses/user_timeline', options, (err, data, response)=>{
+        console.log( 'Retrieved ' + data.length + ' tweets' );
+        cb( data ); // passes array of tweets to the callback function
+      });
+    }
+  }
+
+
 }
 
 module.exports = TwitterClient;
